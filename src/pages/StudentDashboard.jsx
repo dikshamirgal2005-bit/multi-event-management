@@ -584,49 +584,64 @@ const StudentDashboard = () => {
                         <div style={{ marginBottom: '2rem' }}>
                             <div className="responsive-grid">
                                 {events.length > 0 ? (
-                                    events.map((event) => (
-                                        <div key={event.id} className="glassmorphism" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                            <div style={{ height: '160px', borderRadius: '8px', overflow: 'hidden' }}>
-                                                <img src={event.posterUrl || 'https://via.placeholder.com/400x200'} alt={event.eventName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                            </div>
-                                            <div>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                                    <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', backgroundColor: 'rgba(99, 102, 241, 0.2)', borderRadius: '4px', color: '#818cf8', fontWeight: '600' }}>
-                                                        {event.category}
-                                                    </span>
-                                                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: event.mode === 'Online' ? '#10b981' : '#f59e0b' }}></div> {event.mode || 'Offline'}
-                                                    </span>
-                                                </div>
-                                                <h3 style={{ fontSize: '1.2rem', marginTop: '0.5rem' }}>{event.eventName}</h3>
-                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                                        <Calendar size={14} /> {event.date}
+                                    events
+                                        .map(e => {
+                                            const isRecommended = userData?.dept && (
+                                                e.category.toLowerCase().includes(userData.dept.toLowerCase()) ||
+                                                ((userData.dept.toLowerCase().includes('cs') || userData.dept.toLowerCase().includes('comp') || userData.dept.toLowerCase().includes('it')) && (e.category === 'Hackathon' || e.category === 'Workshop')) ||
+                                                e.eventName.toLowerCase().includes(userData.dept.toLowerCase())
+                                            );
+                                            return { ...e, isRecommended };
+                                        })
+                                        .sort((a, b) => (b.isRecommended ? 1 : 0) - (a.isRecommended ? 1 : 0))
+                                        .map((event) => (
+                                            <div key={event.id} className="glassmorphism" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', border: event.isRecommended ? '1px solid #10b981' : '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                                                {event.isRecommended && (
+                                                    <div style={{ position: 'absolute', top: '-12px', right: '-12px', backgroundColor: '#10b981', color: 'white', padding: '0.25rem 0.75rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 'bold', boxShadow: '0 4px 6px rgba(0,0,0,0.2)', zIndex: 10 }}>
+                                                        ⭐ Recommended for You
                                                     </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                                        <Clock size={14} /> {formatTime(event.time)}
-                                                    </div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                                        <MapPin size={14} /> {event.venue}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
-                                                {registrations.some(r => r.eventId === event.id) ? (
-                                                    <button
-                                                        onClick={() => handleShowTicket(registrations.find(r => r.eventId === event.id))}
-                                                        className="btn-primary"
-                                                        style={{ flex: 1, padding: '0.6rem', background: 'linear-gradient(135deg, #10b981, #059669)' }}
-                                                    >
-                                                        View Ticket
-                                                    </button>
-                                                ) : (
-                                                    <button onClick={() => handleRegister(event)} className="btn-primary" style={{ flex: 1, padding: '0.6rem' }}>Register</button>
                                                 )}
-                                                <button onClick={() => setSelectedEventDetails(event)} className="btn-primary" style={{ flex: 1, background: 'rgba(255,255,255,0.1)', padding: '0.6rem' }}>Details</button>
+                                                <div style={{ height: '160px', borderRadius: '8px', overflow: 'hidden' }}>
+                                                    <img src={event.posterUrl || 'https://via.placeholder.com/400x200'} alt={event.eventName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                </div>
+                                                <div>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                                        <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem', backgroundColor: 'rgba(99, 102, 241, 0.2)', borderRadius: '4px', color: '#818cf8', fontWeight: '600' }}>
+                                                            {event.category}
+                                                        </span>
+                                                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: event.mode === 'Online' ? '#10b981' : '#f59e0b' }}></div> {event.mode || 'Offline'}
+                                                        </span>
+                                                    </div>
+                                                    <h3 style={{ fontSize: '1.2rem', marginTop: '0.5rem' }}>{event.eventName}</h3>
+                                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1rem' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                                            <Calendar size={14} /> {event.date}
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                                            <Clock size={14} /> {formatTime(event.time)}
+                                                        </div>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                                            <MapPin size={14} /> {event.venue}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto' }}>
+                                                    {registrations.some(r => r.eventId === event.id) ? (
+                                                        <button
+                                                            onClick={() => handleShowTicket(registrations.find(r => r.eventId === event.id))}
+                                                            className="btn-primary"
+                                                            style={{ flex: 1, padding: '0.6rem', background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                                                        >
+                                                            View Ticket
+                                                        </button>
+                                                    ) : (
+                                                        <button onClick={() => handleRegister(event)} className="btn-primary" style={{ flex: 1, padding: '0.6rem' }}>Register</button>
+                                                    )}
+                                                    <button onClick={() => setSelectedEventDetails(event)} className="btn-primary" style={{ flex: 1, background: 'rgba(255,255,255,0.1)', padding: '0.6rem' }}>Details</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))
+                                        ))
                                 ) : (
                                     <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '4rem', opacity: 0.5, backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px dashed rgba(255,255,255,0.1)' }}>
                                         <Calendar size={48} style={{ marginBottom: '1rem', opacity: 0.3 }} />

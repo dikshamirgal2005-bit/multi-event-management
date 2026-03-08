@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, Phone, School, BookOpen, Calendar, Users, Hash, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, Phone, School, BookOpen, Calendar, Users, Hash, ArrowRight, ArrowLeft } from 'lucide-react';
 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
@@ -64,7 +64,12 @@ const Register = () => {
     };
 
     return (
-        <div className="auth-container" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
+        <div className="auth-container" style={{ paddingTop: '4rem', paddingBottom: '4rem', position: 'relative' }}>
+            <div style={{ position: 'absolute', top: '2rem', left: '2rem', zIndex: 10 }}>
+                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-muted)', textDecoration: 'none', fontWeight: '500', transition: 'color 0.2s', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    <ArrowLeft size={18} /> Home
+                </Link>
+            </div>
             <div className="auth-card glassmorphism register-card">
                 <div className="animated-title-wrapper" style={{ marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
                     <h1 className="animated-text">Multi Event Management Platform</h1>

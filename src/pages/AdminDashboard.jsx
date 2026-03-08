@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db, storage } from '../firebase';
 import { collection, addDoc, getDocs, orderBy, query, doc, getDoc, deleteDoc } from 'firebase/firestore';
-import { CalendarPlus, History, Calendar, Clock, MapPin, LogOut, Trash2, FileUp, Loader2, X, Link, Download, Plus } from 'lucide-react';
+import { CalendarPlus, History, Calendar, Clock, MapPin, LogOut, Trash2, FileUp, Loader2, X, Link, Download, Plus, BarChart2 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AdminEventDetails from './AdminEventDetails';
 
 const AdminDashboard = () => {
@@ -124,6 +125,12 @@ const AdminDashboard = () => {
                     >
                         <CalendarPlus size={18} /> Create Event
                     </button>
+                    <button
+                        onClick={() => setActiveView('analytics')}
+                        className={`dashboard-nav-item ${activeView === 'analytics' ? 'active' : ''}`}
+                    >
+                        <BarChart2 size={18} /> Analytics
+                    </button>
 
                     <h2 className="hide-on-mobile" style={{ fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: '600', color: 'var(--text-muted)', margin: '1rem 0 0.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', paddingLeft: '1rem' }}>
                         <History size={16} /> Event History
@@ -193,7 +200,9 @@ const AdminDashboard = () => {
                         <LogOut size={16} /> Logout
                     </button>
                 </header>
-                {activeView === 'create' ? <CreateEvent creatorId={userData.uid} onEventCreated={fetchEventsList} /> : <AdminEventDetails embeddedEventId={activeView} onClose={() => setActiveView('create')} />}
+                {activeView === 'create' ? <CreateEvent creatorId={userData.uid} onEventCreated={fetchEventsList} /> :
+                    activeView === 'analytics' ? <AdminAnalytics events={displayedEvents} /> :
+                        <AdminEventDetails embeddedEventId={activeView} onClose={() => setActiveView('create')} />}
             </div>
         </div>
     );
@@ -484,6 +493,95 @@ const CreateEvent = ({ creatorId, onEventCreated }) => {
     );
 };
 
+const AdminAnalytics = ({ events }) => {
+    const [registrations, setRegistrations] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const fetchRegistrations = async () => {
+            try {
+                const q = query(collection(db, 'registrations'));
+                const querySnapshot = await getDocs(q);
+                const regs = querySnapshot.docs.map(doc => doc.data());
+                setRegistrations(regs);
+            } catch (error) {
+                console.error("Error fetching registrations:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRegistrations();
+    }, []);
+
+    if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>Loading analytics...</div>;
+
+    // Calculate aggregated data
+    const chartData = events.map(event => {
+        const eventRegs = registrations.filter(r => r.eventId === event.id).length;
+        // fallback dummy check
+        const dummyRegs = event.id.startsWith('dummy-') ? Math.floor(Math.random() * 50) + 10 : 0;
+        const total = eventRegs + dummyRegs;
+        return {
+            name: event.eventName.length > 15 ? event.eventName.substring(0, 15) + '...' : event.eventName,
+            fullName: event.eventName,
+            registrations: total
+        };
+    }).filter(d => d.registrations > 0); // Only show events with some registrations
+
+    const totalEvents = events.length;
+    const totalRegs = chartData.reduce((acc, curr) => acc + curr.registrations, 0);
+
+    return (
+        <div className="auth-card auth-box-pad glassmorphism fade-in" style={{ maxWidth: '900px', margin: '0' }}>
+            <div className="auth-header" style={{ textAlign: 'left', marginBottom: '2rem' }}>
+                <h2>Analytics Overview</h2>
+                <p>Track your platform registrations and event turnout.</p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+                <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '2.5rem', color: '#a5b4fc', margin: 0 }}>{totalEvents}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.5rem' }}>Total Events</p>
+                </div>
+                <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '2.5rem', color: '#34d399', margin: 0 }}>{totalRegs}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '0.5rem' }}>Total Registrations</p>
+                </div>
+            </div>
+
+            {chartData.length > 0 ? (
+                <>
+                    <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: '#c4b5fd' }}>Registrations per Event</h3>
+                    <div style={{ width: '100%', height: '350px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '1rem', paddingTop: '2rem' }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={chartData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }} angle={-15} textAnchor="end" />
+                                <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fill: 'rgba(255,255,255,0.6)', fontSize: 12 }} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                                    itemStyle={{ color: '#818cf8', fontWeight: 'bold' }}
+                                    labelStyle={{ color: '#fff', marginBottom: '5px' }}
+                                />
+                                <Bar dataKey="registrations" fill="url(#colorPv)" radius={[4, 4, 0, 0]} barSize={40}>
+                                </Bar>
+                                <defs>
+                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#818cf8" stopOpacity={1} />
+                                        <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.8} />
+                                    </linearGradient>
+                                </defs>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </>
+            ) : (
+                <div style={{ textAlign: 'center', padding: '3rem', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '12px' }}>
+                    <p style={{ color: 'var(--text-muted)' }}>Not enough data to display registration charts.</p>
+                </div>
+            )}
+        </div>
+    );
+};
 
 export default AdminDashboard;

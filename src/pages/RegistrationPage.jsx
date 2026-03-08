@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
 import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
+import { sendRegistrationEmail } from '../utils/emailService';
 import { Calendar, MapPin, Clock, CheckCircle, Plus, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -106,6 +107,25 @@ const RegistrationPage = () => {
                 ...(event.category === 'Hackathon' ? { teamName, members: teamMembers } : formData),
                 registeredAt: new Date()
             });
+
+            // Send Email Notification
+            try {
+                let userEmail = '';
+                let userName = '';
+                if (event.category === 'Hackathon') {
+                    userEmail = teamMembers[0]?.email || user.email;
+                    userName = teamMembers[0]?.name || user.displayName || 'Participant';
+                } else {
+                    userEmail = formData.email || user.email;
+                    userName = formData.name || user.displayName || 'Participant';
+                }
+                if (userEmail) {
+                    await sendRegistrationEmail(userEmail, userName, event.eventName);
+                }
+            } catch (emailErr) {
+                console.error("EmailJS error (non-fatal):", emailErr);
+            }
+
             alert(`Successfully registered for ${event.eventName}! 🎉`);
             setSubmitted(true);
         } catch (err) {

@@ -5,6 +5,7 @@ import { doc, getDoc, collection, getDocs, query, where, updateDoc, onSnapshot }
 import { ArrowLeft, Users, Calendar, Clock, MapPin, Trophy, LayoutTemplate, Link, Download, QrCode, Search, Check, X, Loader2, Plus, FileText, FileUp } from 'lucide-react';
 import Papa from 'papaparse';
 import { Html5QrcodeScanner } from 'html5-qrcode';
+import { sendResourceEmail } from '../utils/emailService';
 
 const AdminEventDetails = ({ embeddedEventId }) => {
     const { eventId: routeEventId } = useParams();
@@ -172,6 +173,23 @@ const AdminEventDetails = ({ embeddedEventId }) => {
             const updatedResources = [...resources, newResource];
 
             await updateDoc(doc(db, 'events', eventId), { resources: updatedResources });
+
+            // Notify all attendees via email in background
+            const emailPromises = attendees.flatMap(reg => {
+                if (reg.members) {
+                    return reg.members.map(m => {
+                        if (m.email) {
+                            return sendResourceEmail(m.email, m.name || 'Participant', event?.eventName || 'Event', newResourceName).catch(e => console.error("Email sending issue:", e));
+                        }
+                        return Promise.resolve();
+                    });
+                } else if (reg.email) {
+                    return sendResourceEmail(reg.email, reg.name || 'Participant', event?.eventName || 'Event', newResourceName).catch(e => console.error("Email sending issue:", e));
+                }
+                return Promise.resolve();
+            });
+            Promise.all(emailPromises).catch(err => console.error("Email sending issue:", err));
+
             setResources(updatedResources);
             setNewResourceName('');
             setNewResourceUrl('');

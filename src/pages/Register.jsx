@@ -64,8 +64,12 @@ const Register = () => {
     };
 
     return (
-        <div className="auth-container">
+        <div className="auth-container" style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
             <div className="auth-card glassmorphism register-card">
+                <div className="animated-title-wrapper" style={{ marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
+                    <h1 className="animated-text">Multi Event Management Platform</h1>
+                    <p className="animated-subtitle">Join us to discover, manage, and participate in amazing academic activities.</p>
+                </div>
                 <div className="auth-header">
                     <h2>Create Account</h2>
                     <p>Join the Event Platform</p>

@@ -46,6 +46,10 @@ const Login = () => {
     return (
         <div className="auth-container">
             <div className="auth-card glassmorphism">
+                <div className="animated-title-wrapper" style={{ marginBottom: '1.5rem', marginTop: '-0.5rem' }}>
+                    <h1 className="animated-text">Multi Event Management Platform</h1>
+                    <p className="animated-subtitle">Organize, track, and elevate your campus events seamlessly.</p>
+                </div>
                 <div className="auth-header">
                     <h2>Welcome Back</h2>
                     <p>Sign in to your account</p>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { db, auth } from '../firebase';
 import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { Calendar, MapPin, Clock, CheckCircle, Plus, X } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const RegistrationPage = () => {
     const { eventId } = useParams();
@@ -160,42 +161,54 @@ const RegistrationPage = () => {
     const fields = event.registrationFields || {};
 
     return (
-        <div style={{ minHeight: '100vh', backgroundColor: '#0f172a', color: 'white', padding: '2rem 1rem' }}>
-            <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-                {/* Event Summary Card */}
-                <div className="glassmorphism fade-in" style={{ padding: '2rem', marginBottom: '2.5rem', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-                        {event.posterUrl && (
-                            <div style={{ width: '120px', height: '120px', borderRadius: '12px', overflow: 'hidden', flexShrink: 0 }}>
-                                <img src={event.posterUrl} alt={event.eventName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            </div>
-                        )}
-                        <div style={{ flex: 1 }}>
-                            <span style={{ fontSize: '0.75rem', padding: '0.25rem 0.6rem', backgroundColor: 'rgba(79, 70, 229, 0.2)', borderRadius: '6px', color: '#a5b4fc', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                {event.category}
-                            </span>
-                            <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', margin: '0.75rem 0', background: 'linear-gradient(135deg, #fff, #a5b4fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                                {event.eventName}
-                            </h1>
-                            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', color: 'var(--text-muted)', fontSize: '0.95rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Calendar size={16} /> {event.date}</div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Clock size={16} /> {event.time}</div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><MapPin size={16} /> {event.venue}</div>
-                            </div>
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="auth-container"
+        >
+            <div className="auth-box glassmorphism" style={{ maxWidth: '1100px', maxHeight: '90vh' }}>
+                {/* Event Summary Left Side */}
+                <div className="auth-intro fade-in" style={{ padding: '3rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    {event.posterUrl && (
+                        <div style={{ width: '100%', height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '2rem', flexShrink: 0, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                            <img src={event.posterUrl} alt={event.eventName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
+                    )}
+                    <span className="premium-badge">
+                        ✨ {event.category}
+                    </span>
+                    <h1 className="animated-text" style={{ fontSize: '2.5rem', marginBottom: '1.5rem', textAlign: 'left' }}>
+                        {event.eventName}
+                    </h1>
+
+                    <div className="intro-features" style={{ marginTop: '1rem', gap: '1rem' }}>
+                        <div className="intro-feature-item" style={{ padding: '0.75rem 1rem' }}>
+                            <div className="feature-icon-wrapper" style={{ width: '32px', height: '32px' }}><Calendar size={16} /></div>
+                            <span>{event.date}</span>
+                        </div>
+                        <div className="intro-feature-item" style={{ padding: '0.75rem 1rem' }}>
+                            <div className="feature-icon-wrapper" style={{ width: '32px', height: '32px' }}><Clock size={16} /></div>
+                            <span>{event.time}</span>
+                        </div>
+                        <div className="intro-feature-item" style={{ padding: '0.75rem 1rem' }}>
+                            <div className="feature-icon-wrapper" style={{ width: '32px', height: '32px' }}><MapPin size={16} /></div>
+                            <span>{event.venue || 'TBA'}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Registration Form */}
-                <div className="auth-card glassmorphism fade-in" style={{ maxWidth: '100%', margin: '0' }}>
+                {/* Registration Form Right Side */}
+                <div className="auth-card" style={{ padding: '3rem', overflowY: 'auto' }}>
                     {!user ? (
-                        <div style={{ textAlign: 'center', padding: '2rem' }}>
-                            <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Login Required</h2>
+                        <div style={{ textAlign: 'center', padding: '2rem', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Login Required</h2>
                             <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>You must be logged in as a student to register for this event.</p>
                             <button
                                 onClick={() => navigate('/login')}
                                 className="btn-primary"
-                                style={{ width: '100%' }}
+                                style={{ width: '100%', maxWidth: '300px', margin: '0 auto' }}
                             >
                                 Login Now
                             </button>
@@ -203,11 +216,11 @@ const RegistrationPage = () => {
                     ) : (
                         <>
                             <div className="auth-header" style={{ textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '1.5rem', marginBottom: '2rem' }}>
-                                <h2 style={{ fontSize: '1.5rem' }}>Registration Form</h2>
-                                <p>Fill in the required details to participate in this event.</p>
+                                <h2 style={{ fontSize: '1.8rem' }}>Registration Form</h2>
+                                <p>Fill in the required details to participate.</p>
                             </div>
 
-                            <form onSubmit={handleSubmit} className="auth-form">
+                            <form onSubmit={handleSubmit} className="auth-form" style={{ paddingBottom: '2rem' }}>
                                 {event.category === 'Hackathon' ? (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                                         <div className="input-group full-width">
@@ -337,7 +350,7 @@ const RegistrationPage = () => {
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 

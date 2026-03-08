@@ -190,7 +190,7 @@ const RegistrationPage = () => {
         >
             <div className="auth-box glassmorphism" style={{ maxWidth: '1100px', maxHeight: '90vh' }}>
                 {/* Event Summary Left Side */}
-                <div className="auth-intro fade-in" style={{ padding: '3rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="auth-intro fade-in auth-box-pad" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                     {event.posterUrl && (
                         <div style={{ width: '100%', height: '240px', borderRadius: '16px', overflow: 'hidden', marginBottom: '2rem', flexShrink: 0, boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
                             <img src={event.posterUrl} alt={event.eventName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -220,7 +220,7 @@ const RegistrationPage = () => {
                 </div>
 
                 {/* Registration Form Right Side */}
-                <div className="auth-card" style={{ padding: '3rem', overflowY: 'auto' }}>
+                <div className="auth-card auth-box-pad" style={{ overflowY: 'auto' }}>
                     {!user ? (
                         <div style={{ textAlign: 'center', padding: '2rem', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem' }}>Login Required</h2>
@@ -359,8 +359,11 @@ const RegistrationPage = () => {
                                     </div>
                                 )}
 
-                                <div className="full-width" style={{ marginTop: '2rem' }}>
-                                    <button type="submit" className="btn-primary full-width-btn" disabled={submitting}>
+                                <div className="full-width" style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
+                                    <button type="button" onClick={() => navigate('/student-dashboard')} className="btn-secondary" style={{ flex: 1, padding: '0.875rem', borderRadius: '12px', background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-main)', cursor: 'pointer', transition: 'all 0.3s ease', fontWeight: '600' }} disabled={submitting}>
+                                        Cancel
+                                    </button>
+                                    <button type="submit" className="btn-primary" disabled={submitting} style={{ flex: 2, margin: 0 }}>
                                         {submitting ? 'Registering...' : 'Complete Registration'}
                                     </button>
                                 </div>

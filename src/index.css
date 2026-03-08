@@ -19,6 +19,34 @@
   box-sizing: border-box;
 }
 
+/* Custom Webkit Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  /* matches input-bg or bg-color roughly */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) rgba(15, 23, 42, 0.5);
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-color);
@@ -157,6 +185,32 @@ body {
   }
 }
 
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+}
+
+.auth-box-pad {
+  padding: 1.5rem;
+}
+
+@media (min-width: 860px) {
+  .auth-box {
+    flex-direction: row;
+  }
+
+  .auth-box>div {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .auth-box-pad {
+    padding: 3rem;
+  }
+}
+
 .auth-header {
   text-align: center;
   margin-bottom: 2rem;
@@ -201,7 +255,8 @@ body {
   gap: 0.5rem;
 }
 
-.input-group.full-width {
+.input-group.full-width,
+.full-width {
   grid-column: 1 / -1;
 }
 

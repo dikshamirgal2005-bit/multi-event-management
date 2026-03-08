@@ -7,7 +7,7 @@ import Papa from 'papaparse';
 import { Html5QrcodeScanner } from 'html5-qrcode';
 import { sendResourceEmail } from '../utils/emailService';
 
-const AdminEventDetails = ({ embeddedEventId }) => {
+const AdminEventDetails = ({ embeddedEventId, onClose }) => {
     const { eventId: routeEventId } = useParams();
     const eventId = embeddedEventId || routeEventId;
     const navigate = useNavigate();
@@ -228,9 +228,19 @@ const AdminEventDetails = ({ embeddedEventId }) => {
                 </button>
             )}
 
-            <div className="glassmorphism fade-in" style={{ padding: '2rem', marginBottom: '2rem' }}>
+            <div className="glassmorphism fade-in" style={{ padding: '2rem', marginBottom: '2rem', position: 'relative' }}>
+                {embeddedEventId && onClose && (
+                    <button onClick={onClose} style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text-muted)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s', zIndex: 10 }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)'; e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.5)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+                        title="Close Event Details"
+                    >
+                        <X size={20} />
+                    </button>
+                )}
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, paddingRight: embeddedEventId ? '2.5rem' : '0' }}>
                         <div style={{ padding: '0.5rem 1rem', backgroundColor: 'rgba(79, 70, 229, 0.2)', borderRadius: '8px', color: '#c4b5fd', fontSize: '0.9rem', fontWeight: 'bold', width: 'fit-content', marginBottom: '1rem' }}>
                             {event.category}
                         </div>
@@ -239,7 +249,7 @@ const AdminEventDetails = ({ embeddedEventId }) => {
                         </h1>
                         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>{event.description}</p>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: embeddedEventId ? '2rem' : '0' }}>
                         <button onClick={() => setScanning(!scanning)} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: 'auto', padding: '0.75rem 1.5rem', backgroundColor: scanning ? '#ef4444' : 'var(--primary)' }}>
                             <QrCode size={18} /> {scanning ? 'Stop Scanning' : 'Open QR Scanner'}
                         </button>

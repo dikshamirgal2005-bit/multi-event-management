@@ -193,7 +193,7 @@ const AdminDashboard = () => {
                         <LogOut size={16} /> Logout
                     </button>
                 </header>
-                {activeView === 'create' ? <CreateEvent creatorId={userData.uid} onEventCreated={fetchEventsList} /> : <AdminEventDetails embeddedEventId={activeView} />}
+                {activeView === 'create' ? <CreateEvent creatorId={userData.uid} onEventCreated={fetchEventsList} /> : <AdminEventDetails embeddedEventId={activeView} onClose={() => setActiveView('create')} />}
             </div>
         </div>
     );
@@ -228,6 +228,20 @@ const CreateEvent = ({ creatorId, onEventCreated }) => {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [generatedLink, setGeneratedLink] = useState('');
+
+    const handleReset = () => {
+        if (window.confirm("Are you sure you want to discard this event?")) {
+            setFormData({
+                posterUrl: '', eventName: '', category: 'Hackathon', teamMembers: '',
+                dept: '', year: '', prizePool: '', description: '',
+                venue: '', time: '', date: '', mode: 'Offline',
+                registrationFields: { name: true, email: true, contact: true, dept: false, rollno: false, div: false, year: false },
+                resources: []
+            });
+            setMessage('');
+            setGeneratedLink('');
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;

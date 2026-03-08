@@ -48,6 +48,11 @@ It features dedicated portals for both **Students** and **Administrators**, stre
 
 ---
 
+## 📧 Email Notifications
+* **EmailJS** – Third-party service used to send dynamic emails to students upon event registration and when new resources are uploaded. No backend server required.
+
+---
+
 # 💻 How to Run the Project Locally
 
 ## Prerequisites
@@ -60,7 +65,7 @@ Make sure **Node.js** is installed on your system.
 
 ### 1️⃣ Clone the repository
 
-git clone <repository-url>
+git clone https://github.com/dikshamirgal2005-bit/multi-event-management.git
 
 ### 2️⃣ Navigate to the project folder
 
@@ -72,11 +77,25 @@ npm install
 
 ### 4️⃣ Setup environment variables
 
-Create a `.env` file and add your Firebase configuration:
+Create a `.env` file and add your Firebase and EmailJS configuration:
 
+```env
+# Firebase Setup
 VITE_FIREBASE_API_KEY=your_key
 VITE_FIREBASE_AUTH_DOMAIN=your_domain
 VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_storage_bucket
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+
+# EmailJS Setup (Create templates at emailjs.com)
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+VITE_EMAILJS_REGISTRATION_TEMPLATE_ID=your_registration_template_id
+VITE_EMAILJS_RESOURCE_TEMPLATE_ID=your_resource_template_id
+```
+
+
 
 ### 5️⃣ Start the development server
 

@@ -172,7 +172,8 @@ body {
     padding: 1rem;
   }
 
-  .auth-card {
+  .auth-card,
+  .auth-box-pad {
     padding: 1.5rem;
   }
 

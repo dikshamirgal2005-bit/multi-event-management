@@ -352,7 +352,7 @@ const CreateEvent = ({ creatorId, onEventCreated }) => {
     };
 
     return (
-        <div className="auth-card glassmorphism fade-in" style={{ maxWidth: '800px', margin: '0' }}>
+        <div className="auth-card auth-box-pad glassmorphism fade-in" style={{ maxWidth: '800px', margin: '0' }}>
             <div className="auth-header" style={{ textAlign: 'left' }}>
                 <h2>Create New Event</h2>
                 <p>Fill in the details to publish a new event.</p>

@@ -797,12 +797,12 @@ const StudentDashboard = () => {
                                                                     transition: 'all 0.2s'
                                                                 }}
                                                             >
-                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                                        <div style={{ padding: '0.5rem', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '8px', color: '#818cf8' }}>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: '1 1 min-content', overflow: 'hidden' }}>
+                                                                        <div style={{ padding: '0.5rem', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '8px', color: '#818cf8', flexShrink: 0 }}>
                                                                             <Link size={16} />
                                                                         </div>
-                                                                        <span style={{ fontSize: '0.9rem', fontWeight: '500' }}>{res.name}</span>
+                                                                        <span style={{ fontSize: '0.9rem', fontWeight: '500', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>{res.name}</span>
                                                                     </div>
 
                                                                     <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>

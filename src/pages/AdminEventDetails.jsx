@@ -280,20 +280,20 @@ const AdminEventDetails = ({ embeddedEventId, onClose }) => {
                     <h2 style={{ fontSize: '1.5rem', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: 0 }}>
                         <FileUp size={24} color="#8b5cf6" /> Event Resources
                     </h2>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', width: '100%' }}>
                         <input
                             type="text"
                             placeholder="Resource Name"
                             value={newResourceName}
                             onChange={(e) => setNewResourceName(e.target.value)}
-                            style={{ flex: '1', minWidth: '150px', padding: '0.5rem', backgroundColor: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem' }}
+                            style={{ flex: '1 1 150px', minWidth: '150px', padding: '0.75rem', backgroundColor: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem' }}
                         />
                         <input
                             type="url"
                             placeholder="Drive Link (https://...)"
                             value={newResourceUrl}
                             onChange={(e) => setNewResourceUrl(e.target.value)}
-                            style={{ flex: '2', minWidth: '200px', padding: '0.5rem', backgroundColor: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.85rem' }}
+                            style={{ flex: '2 1 200px', minWidth: '200px', padding: '0.75rem', backgroundColor: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)', fontSize: '0.9rem' }}
                         />
                         <button
                             type="button"
@@ -312,12 +312,12 @@ const AdminEventDetails = ({ embeddedEventId, onClose }) => {
                 ) : (
                     <div className="responsive-grid">
                         {resources.map((res, index) => (
-                            <div key={index} className="glassmorphism" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
+                            <div key={index} className="glassmorphism" style={{ padding: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', gap: '1rem', flexWrap: 'nowrap' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden', flex: 1 }}>
                                     <Link size={18} color="#c4b5fd" style={{ flexShrink: 0 }} />
-                                    <span style={{ fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{res.name}</span>
+                                    <span style={{ fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'block' }}>{res.name}</span>
                                 </div>
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                                     <a href={res.url} target="_blank" rel="noopener noreferrer" style={{ padding: '0.4rem', background: 'rgba(79, 70, 229, 0.1)', color: '#a5b4fc', border: 'none', borderRadius: '6px', display: 'flex' }}>
                                         <Download size={16} />
                                     </a>

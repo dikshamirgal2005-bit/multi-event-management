@@ -84,9 +84,13 @@ const AdminEventDetails = ({ embeddedEventId }) => {
         isProcessingRef.current = true;
 
         try {
-            // Attempt to synchronously pause the scanner
-            if (scannerRef.current && scannerRef.current.pause) {
-                scannerRef.current.pause(true);
+            // Attempt to completely shut down the scanner immediately to stop further callbacks
+            if (scannerRef.current) {
+                try {
+                    await scannerRef.current.clear();
+                } catch (e) {
+                    console.error("Error clearing scanner on success:", e);
+                }
             }
 
             // Decoded text expected: "REG:regId|USER:userId"
@@ -101,7 +105,7 @@ const AdminEventDetails = ({ embeddedEventId }) => {
                 // Show success alert slightly deferred
                 setTimeout(() => {
                     alert("Successfully checked in via QR code! ✅");
-                }, 100);
+                }, 300);
             } else {
                 isProcessingRef.current = false; // Release lock if invalid QR
             }

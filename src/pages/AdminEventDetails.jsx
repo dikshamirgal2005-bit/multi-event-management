@@ -18,6 +18,7 @@ const AdminEventDetails = ({ embeddedEventId }) => {
     const [expandedTeam, setExpandedTeam] = useState(null);
     const [scanning, setScanning] = useState(false);
     const scannerRef = useRef(null);
+    const isProcessingRef = useRef(false);
 
     useEffect(() => {
         if (!eventId) return;
@@ -58,6 +59,7 @@ const AdminEventDetails = ({ embeddedEventId }) => {
 
     useEffect(() => {
         if (scanning) {
+            isProcessingRef.current = false; // Reset lock when scanning starts
             const scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: { width: 250, height: 250 } }, false);
             scanner.render(onScanSuccess, onScanError);
             scannerRef.current = scanner;
@@ -75,17 +77,37 @@ const AdminEventDetails = ({ embeddedEventId }) => {
     }, [scanning]);
 
     const onScanSuccess = async (decodedText) => {
+        // Drop any subsequent scan triggers if we are already processing one
+        if (isProcessingRef.current) return;
+
+        // Immediately acquire lock
+        isProcessingRef.current = true;
+
         try {
+            // Attempt to synchronously pause the scanner
+            if (scannerRef.current && scannerRef.current.pause) {
+                scannerRef.current.pause(true);
+            }
+
             // Decoded text expected: "REG:regId|USER:userId"
             const regIdMatch = decodedText.match(/REG:([^|]+)/);
             if (regIdMatch && regIdMatch[1]) {
                 const regId = regIdMatch[1];
                 await handleManualCheckIn(regId);
+
+                // Close scanner UI
                 setScanning(false);
-                alert("Successfully checked in via QR code! ✅");
+
+                // Show success alert slightly deferred
+                setTimeout(() => {
+                    alert("Successfully checked in via QR code! ✅");
+                }, 100);
+            } else {
+                isProcessingRef.current = false; // Release lock if invalid QR
             }
         } catch (err) {
             console.error("Scan processing error:", err);
+            isProcessingRef.current = false; // Release lock on error
         }
     };
 
